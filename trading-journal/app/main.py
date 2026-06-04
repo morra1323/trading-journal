@@ -9,7 +9,7 @@ import os
 
 Base.metadata.create_all(bind=engine)
 
-app = FastAPI(title="Trading Journal API")
+app = FastAPI(title="New Trading Era API")
 
 app.add_middleware(
     CORSMiddleware,
@@ -29,7 +29,11 @@ def startup():
     start_scheduler()
 
 @app.get("/")
-def root():
+def landing():
+    return FileResponse("landing/index.html")
+
+@app.get("/app")
+def app_page():
     return FileResponse("static/index.html")
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
