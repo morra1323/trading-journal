@@ -40,4 +40,14 @@ def app_page():
 def google_verify():
     return FileResponse("googleffbf3d971404215a.html")
 
+@app.get("/sitemap.xml")
+def sitemap():
+    content = '''<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://https://trading-journal-production-ced4.up.railway.app/</loc><priority>1.0</priority></url>
+  <url><loc>https://https://trading-journal-production-ced4.up.railway.app/app</loc><priority>0.8</priority></url>
+</urlset>'''
+    from fastapi.responses import Response
+    return Response(content=content, media_type="application/xml")
+
 app.mount("/static", StaticFiles(directory="static"), name="static")
