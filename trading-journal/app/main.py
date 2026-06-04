@@ -36,4 +36,8 @@ def landing():
 def app_page():
     return FileResponse("static/index.html")
 
+@app.get("/googleffbf3d971404215a.html")
+def google_verify():
+    return FileResponse("googleffbf3d971404215a.html")
+
 app.mount("/static", StaticFiles(directory="static"), name="static")
