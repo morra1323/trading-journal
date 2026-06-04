@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>New Trading Era — Журнал трейдера нового поколения</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--black:#080810;--white:#fafaf8;--green:#7c3aed;--green2:#6d28d9;--greenDim:rgba(124,58,237,0.12);--border:rgba(255,255,255,0.07);--text:#dddbd5;--text2:#888;}
+html{scroll-behavior:smooth}
+body{background:var(--black);color:var(--text);font-family:'DM Sans',sans-serif;overflow-x:hidden;line-height:1.6}
+h1,h2,h3,.display{font-family:'Syne',sans-serif;letter-spacing:-0.03em;line-height:1.05}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:20px 6%;display:flex;align-items:center;justify-content:space-between;transition:all 0.3s}
+nav.scrolled{background:rgba(8,8,16,0.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--border)}
+.logo{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;letter-spacing:-0.04em}
+.logo span{color:var(--green)}
+.nav-links{display:flex;align-items:center;gap:28px}
+.nav-links a{color:var(--text2);text-decoration:none;font-size:14px;transition:color 0.2s}
+.nav-links a:hover{color:var(--text)}
+.btn{display:inline-block;padding:10px 22px;border-radius:8px;font-size:14px;font-weight:500;text-decoration:none;transition:all 0.2s;font-family:'DM Sans',sans-serif;cursor:pointer;border:none}
+.btn-green{background:var(--green);color:#000;font-weight:700}
+.btn-green:hover{background:var(--green2);transform:translateY(-1px)}
+.btn-ghost{background:transparent;color:var(--text);border:1px solid var(--border)}
+.btn-ghost:hover{border-color:rgba(255,255,255,0.2)}
+
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:140px 6% 80px;position:relative}
+.hero-glow{position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);width:700px;height:700px;background:radial-gradient(ellipse,rgba(124,58,237,0.07) 0%,transparent 65%);pointer-events:none}
+.pill{display:inline-flex;align-items:center;gap:8px;background:var(--greenDim);border:1px solid rgba(124,58,237,0.3);color:var(--green);padding:6px 16px;border-radius:100px;font-size:12px;font-weight:700;margin-bottom:36px;letter-spacing:0.06em;text-transform:uppercase}
+.dot-anim{width:6px;height:6px;background:var(--green);border-radius:50%;animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
+.hero h1{font-size:clamp(44px,6.5vw,90px);font-weight:800;margin-bottom:24px}
+.hero h1 em{color:var(--green);font-style:normal}
+.hero p{font-size:clamp(16px,1.8vw,19px);color:var(--text2);max-width:540px;margin:0 auto 48px;line-height:1.75}
+.hero-btns{display:flex;gap:14px;align-items:center;justify-content:center;flex-wrap:wrap}
+.hero-note{font-size:12px;color:var(--text2);margin-top:14px;opacity:0.7}
+
+.preview-wrap{max-width:1100px;margin:0 auto;padding:0 6% 100px}
+.browser{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:16px;overflow:hidden}
+.browser-bar{padding:12px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.02)}
+.bdot{width:10px;height:10px;border-radius:50%}
+.url{font-size:11px;color:var(--text2);margin-left:10px;background:rgba(255,255,255,0.04);padding:4px 12px;border-radius:4px}
+.dashboard-mock{padding:20px;display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.m{background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:8px;padding:14px}
+.ml{font-size:10px;color:var(--text2);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px}
+.mv{font-size:22px;font-weight:800;font-family:'Syne',sans-serif;letter-spacing:-0.02em}
+.mv.g{color:var(--green)}.mv.d{color:var(--text2)}
+.chart-mock{grid-column:span 2;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:8px;padding:14px;height:130px;display:flex;flex-direction:column}
+.bars{flex:1;display:flex;align-items:flex-end;gap:3px;margin-top:10px}
+.b{border-radius:2px 2px 0 0;flex:1}.b.g{background:rgba(124,58,237,0.7)}.b.r{background:rgba(226,75,74,0.6)}
+.mood-row{grid-column:span 4;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:8px;padding:14px}
+.mood-items{display:flex;gap:8px;margin-top:10px}
+.mi{flex:1;background:rgba(255,255,255,0.04);border-radius:6px;padding:10px;text-align:center}
+.me{font-size:18px}.mpnl{font-size:12px;font-weight:700;font-family:'Syne',sans-serif}
+.mpnl.g{color:var(--green)}.mpnl.r{color:#e24b4a}
+.mn{font-size:10px;color:var(--text2);margin-top:2px}
+
+.features{max-width:1100px;margin:0 auto;padding:80px 6%}
+.sec-tag{font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--green);margin-bottom:14px}
+.sec-title{font-size:clamp(30px,4vw,50px);font-weight:800;margin-bottom:16px}
+.sec-sub{font-size:17px;color:var(--text2);max-width:500px;line-height:1.7;margin-bottom:56px}
+.fgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.fc{background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:14px;padding:24px;transition:all 0.25s;position:relative;overflow:hidden}
+.fc::after{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(0,194,122,0.5),transparent);opacity:0;transition:opacity 0.3s}
+.fc:hover{border-color:rgba(124,58,237,0.3);transform:translateY(-3px)}.fc:hover::after{opacity:1}
+.fi{font-size:26px;margin-bottom:16px}
+.ft{font-size:17px;font-weight:700;font-family:'Syne',sans-serif;margin-bottom:8px}
+.fd{font-size:13px;color:var(--text2);line-height:1.65}
+.fbadge{display:inline-block;margin-top:12px;padding:3px 10px;background:var(--greenDim);color:var(--green);border-radius:100px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em}
+
+.brokers-section{border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:60px 6%;text-align:center}
+.bt{font-size:12px;color:var(--text2);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:32px}
+.blist{display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap}
+.bchip{padding:12px 22px;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:10px;font-size:14px;font-weight:700;font-family:'Syne',sans-serif;transition:all 0.2s}
+.bchip:hover{border-color:rgba(124,58,237,0.45);background:var(--greenDim)}
+.bchip.ru{border-color:rgba(124,58,237,0.35);color:var(--green)}
+
+.pricing{max-width:700px;margin:0 auto;padding:80px 6%}
+.pgrid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:48px}
+.pc{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:16px;padding:28px}
+.pc.hot{background:var(--greenDim);border-color:rgba(124,58,237,0.4)}
+.pn{font-size:12px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text2);margin-bottom:14px}
+.pc.hot .pn{color:var(--green)}
+.pv{font-size:44px;font-weight:800;font-family:'Syne',sans-serif;letter-spacing:-0.03em}
+.pp{font-size:13px;color:var(--text2);margin-bottom:20px}
+.pf{list-style:none;margin-bottom:24px}
+.pf li{padding:7px 0;font-size:13px;color:var(--text2);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:7px}
+.pf li::before{content:'✓';color:var(--green);font-size:11px;font-weight:700}
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:32px;margin-top:60px;padding-top:60px;border-top:1px solid var(--border)}
+.sv{font-size:44px;font-weight:800;font-family:'Syne',sans-serif;color:var(--green);letter-spacing:-0.03em}
+.sl{font-size:13px;color:var(--text2);margin-top:4px}
+
+.cta{padding:100px 6%;text-align:center;position:relative}
+.cta-glow{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:500px;height:500px;background:radial-gradient(ellipse,rgba(124,58,237,0.05) 0%,transparent 65%);pointer-events:none}
+.cta h2{font-size:clamp(32px,5vw,60px);font-weight:800;margin-bottom:16px}
+.cta p{font-size:17px;color:var(--text2);margin-bottom:36px}
+
+footer{max-width:1100px;margin:0 auto;padding:32px 6%;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.fl{font-family:'Syne',sans-serif;font-size:15px;font-weight:800}.fl span{color:var(--green)}
+footer small{font-size:12px;color:var(--text2)}
+
+@media(max-width:768px){.fgrid,.pgrid{grid-template-columns:1fr}.stats-row{grid-template-columns:1fr}.mood-items{flex-wrap:wrap}.dashboard-mock{grid-template-columns:1fr 1fr}.nav-links a:not(:last-child){display:none}}
+</style>
+</head>
+<body>
+
+<nav id="nav">
+  <div class="logo"><span style="color:#a78bfa;font-size:18px;margin-right:6px">✦</span>New Trading <span>Era</span></div>
+  <div class="nav-links">
+    <a href="#features">Фичи</a>
+    <a href="#pricing">Цены</a>
+    <a href="/app" class="btn btn-green">Начать бесплатно</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-glow"></div>
+  <div class="pill"><div class="dot-anim"></div>Первый журнал с поддержкой Тинькофф</div>
+  <h1>Торгуй умнее.<br><em>Расти быстрее.</em></h1>
+  <p>Автоматический журнал сделок с психологией трейдинга, AI-аналитикой и нативной поддержкой российских брокеров.</p>
+  <div class="hero-btns">
+    <a href="/app" class="btn btn-green" style="font-size:15px;padding:13px 32px">Начать бесплатно</a>
+    <a href="#features" class="btn btn-ghost" style="font-size:15px;padding:13px 32px">Смотреть фичи</a>
+  </div>
+  <p class="hero-note">Бесплатно до 50 сделок · Без кредитной карты · Регистрация за 30 сек</p>
+</section>
+
+<div class="preview-wrap">
+  <div class="browser">
+    <div class="browser-bar">
+      <div class="bdot" style="background:#e24b4a"></div>
+      <div class="bdot" style="background:#f5a623"></div>
+      <div class="bdot" style="background:#7c3aed"></div>
+      <span class="url">newtradinera.app — Дашборд</span>
+    </div>
+    <div class="dashboard-mock">
+      <div class="m"><div class="ml">Общий P&L</div><div class="mv g">+$4,820</div></div>
+      <div class="m"><div class="ml">Винрейт</div><div class="mv">67.4%</div></div>
+      <div class="m"><div class="ml">Profit Factor</div><div class="mv g">2.1</div></div>
+      <div class="m"><div class="ml">Просадка</div><div class="mv d">-$340</div></div>
+      <div class="chart-mock"><div class="ml">Кривая капитала</div><div class="bars"><div class="b g" style="height:30%"></div><div class="b g" style="height:45%"></div><div class="b g" style="height:42%"></div><div class="b g" style="height:58%"></div><div class="b r" style="height:22%"></div><div class="b g" style="height:65%"></div><div class="b g" style="height:72%"></div><div class="b g" style="height:68%"></div><div class="b g" style="height:82%"></div><div class="b r" style="height:18%"></div><div class="b g" style="height:88%"></div><div class="b g" style="height:100%"></div></div></div>
+      <div class="chart-mock"><div class="ml">P&L по инструментам</div><div class="bars"><div class="b g" style="height:100%;flex:2"></div><div class="b r" style="height:38%;flex:1.5"></div><div class="b g" style="height:68%;flex:1"></div><div class="b g" style="height:52%;flex:1.2"></div><div class="b r" style="height:18%;flex:0.8"></div></div></div>
+      <div class="mood-row"><div class="ml">🧠 Психология — P&L по настроению</div><div class="mood-items"><div class="mi"><div class="me">😎</div><div class="mpnl g">+$2,140</div><div class="mn">Уверен</div></div><div class="mi"><div class="me">😌</div><div class="mpnl g">+$1,680</div><div class="mn">Спокойно</div></div><div class="mi"><div class="me">😰</div><div class="mpnl r">-$320</div><div class="mn">Тревожно</div></div><div class="mi"><div class="me">🤑</div><div class="mpnl r">-$580</div><div class="mn">Жадность</div></div><div class="mi"><div class="me">😴</div><div class="mpnl r">-$100</div><div class="mn">Скучно</div></div></div></div>
+    </div>
+  </div>
+</div>
+
+<div class="features" id="features">
+  <div class="sec-tag">Возможности</div>
+  <h2 class="sec-title">Всё что нужно<br>серьёзному трейдеру</h2>
+  <p class="sec-sub">Не просто журнал — платформа которая объясняет почему ты теряешь деньги и как это исправить.</p>
+  <div class="fgrid">
+    <div class="fc"><div class="fi">⚡</div><div class="ft">Автоматический синк</div><p class="fd">Подключи биржу один раз — сделки подтягиваются каждые 5 минут. Никакого ручного ввода.</p><span class="fbadge">Автоматически</span></div>
+    <div class="fc"><div class="fi">🧠</div><div class="ft">Психология трейдинга</div><p class="fd">Отмечай настроение перед сделкой. Узнай — ты теряешь деньги торгуя со скуки или из жадности.</p><span class="fbadge">Уникальная фича</span></div>
+    <div class="fc"><div class="fi">📊</div><div class="ft">Глубокая аналитика</div><p class="fd">Винрейт, Profit Factor, просадка, P&L по дням недели и стратегиям — всё в одном дашборде.</p></div>
+    <div class="fc"><div class="fi">🇷🇺</div><div class="ft">Тинькофф и Мосбиржа</div><p class="fd">Единственный журнал с нативной поддержкой российских брокеров. T-Invest API за 1 минуту.</p><span class="fbadge">Только у нас</span></div>
+    <div class="fc"><div class="fi">📥</div><div class="ft">Импорт CSV</div><p class="fd">Bybit, Binance, Тинькофф и любые другие брокеры через CSV. Формат определяется автоматически.</p></div>
+    <div class="fc"><div class="fi">🔒</div><div class="ft">Безопасность</div><p class="fd">API ключи только с правами чтения. Твои сделки видишь только ты. JWT авторизация.</p></div>
+  </div>
+</div>
+
+<div class="brokers-section">
+  <p class="bt">Поддерживаемые биржи и брокеры</p>
+  <div class="blist">
+    <div class="bchip ru">Тинькофф</div>
+    <div class="bchip">Binance</div>
+    <div class="bchip">Bybit</div>
+    <div class="bchip">OKX</div>
+    <div class="bchip">Kraken</div>
+    <div class="bchip">Gate.io</div>
+    <div class="bchip ru">Сбер*</div>
+    <div class="bchip ru">ВТБ*</div>
+  </div>
+  <p style="font-size:12px;color:var(--text2);margin-top:16px">* Через импорт CSV</p>
+</div>
+
+<div class="pricing" id="pricing">
+  <div class="sec-tag">Тарифы</div>
+  <h2 class="sec-title">Просто и честно</h2>
+  <p class="sec-sub">Начни бесплатно. Переходи на Pro когда будешь готов.</p>
+  <div class="pgrid">
+    <div class="pc">
+      <div class="pn">Бесплатно</div>
+      <div class="pv">$0</div>
+      <div class="pp">навсегда</div>
+      <ul class="pf">
+        <li>До 50 сделок</li>
+        <li>Базовая аналитика</li>
+        <li>Импорт CSV</li>
+        <li>1 биржа</li>
+      </ul>
+      <a href="/app" class="btn btn-ghost" style="width:100%;text-align:center">Начать</a>
+    </div>
+    <div class="pc hot">
+      <div class="pn">Pro</div>
+      <div class="pv">$9</div>
+      <div class="pp">в месяц</div>
+      <ul class="pf">
+        <li>Безлимит сделок</li>
+        <li>Полная аналитика</li>
+        <li>Психология трейдинга</li>
+        <li>Все биржи</li>
+        <li>AI-анализ сделок</li>
+      </ul>
+      <a href="/app" class="btn btn-green" style="width:100%;text-align:center">Попробовать Pro</a>
+    </div>
+  </div>
+  <div class="stats-row">
+    <div><div class="sv">6+</div><div class="sl">Поддерживаемых бирж</div></div>
+    <div><div class="sv">5 мин</div><div class="sl">Интервал автосинка</div></div>
+    <div><div class="sv">#1</div><div class="sl">Журнал с поддержкой Тинькофф</div></div>
+  </div>
+</div>
+
+<div class="cta">
+  <div class="cta-glow"></div>
+  <h2>Начни торговать<br><em style="color:var(--green);font-style:normal">умнее</em> уже сегодня</h2>
+  <p>30 секунд на регистрацию. Подключи биржу. Получай аналитику.</p>
+  <a href="/app" class="btn btn-green" style="font-size:16px;padding:14px 44px">Начать бесплатно →</a>
+</div>
+
+<footer>
+  <div class="fl">New Trading <span>Era</span></div>
+  <small>© 2026 New Trading Era. Все права защищены.</small>
+</footer>
+
+<script>
+window.addEventListener('scroll',()=>{
+  document.getElementById('nav').classList.toggle('scrolled',window.scrollY>50);
+});
+</script>
+</body>
+</html>
