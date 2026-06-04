@@ -8,7 +8,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-:root{--bg:#0a0a0f;--bg2:#111118;--bg3:#1a1a24;--bg4:#22222f;--border:#2a2a3a;--border2:#3a3a50;--text:#e8e8f0;--text2:#9090a8;--text3:#5a5a72;--green:#00d4a0;--greenBg:rgba(0,212,160,0.08);--red:#ff5566;--redBg:rgba(255,85,102,0.08);--blue:#6688ff;--amber:#ffaa44}
+:root{--bg:#0a0a0f;--bg2:#111118;--bg3:#1a1a24;--bg4:#22222f;--border:#2a2a3a;--border2:#3a3a50;--text:#e8e8f0;--text2:#9090a8;--text3:#5a5a72;--green:#7c3aed;--greenBg:rgba(124,58,237,0.1);--red:#ff5566;--redBg:rgba(255,85,102,0.08);--blue:#6688ff;--amber:#ffaa44}
 body{font-family:'Syne',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
 .mono{font-family:'JetBrains Mono',monospace}
 
@@ -120,7 +120,7 @@ tr:hover td{background:var(--bg3)}
 <!-- APP -->
 <div class="app" id="app-screen">
   <div class="sidebar">
-    <div class="logo">Trade<span>Log</span></div>
+    <div class="logo"><span style="color:#a78bfa;margin-right:4px">✦</span>New Trading <span>Era</span></div>
     <nav>
       <div class="nav-item active" onclick="showPage('dashboard',this)">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
@@ -399,12 +399,12 @@ async function loadDashboard(){
 
   const eq=s.equity_curve||[];
   if(equityChart)equityChart.destroy();
-  equityChart=new Chart(document.getElementById('equity-chart').getContext('2d'),{type:'line',data:{labels:eq.map((_,i)=>i+1),datasets:[{data:eq.map(e=>e.pnl),borderColor:'#00d4a0',backgroundColor:'rgba(0,212,160,0.06)',tension:0.3,pointRadius:2,fill:true,borderWidth:2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#5a5a72',font:{size:10}},grid:{color:'rgba(255,255,255,0.04)'}},y:{ticks:{color:'#5a5a72',font:{size:10},callback:v=>'$'+v},grid:{color:'rgba(255,255,255,0.04)'}}}}});
+  equityChart=new Chart(document.getElementById('equity-chart').getContext('2d'),{type:'line',data:{labels:eq.map((_,i)=>i+1),datasets:[{data:eq.map(e=>e.pnl),borderColor:'#7c3aed',backgroundColor:'rgba(124,58,237,0.08)',tension:0.3,pointRadius:2,fill:true,borderWidth:2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#5a5a72',font:{size:10}},grid:{color:'rgba(255,255,255,0.04)'}},y:{ticks:{color:'#5a5a72',font:{size:10},callback:v=>'$'+v},grid:{color:'rgba(255,255,255,0.04)'}}}}});
 
   const syms=Object.keys(s.by_symbol||{});
   const vals=syms.map(k=>s.by_symbol[k]);
   if(symbolChart)symbolChart.destroy();
-  symbolChart=new Chart(document.getElementById('symbol-chart').getContext('2d'),{type:'bar',data:{labels:syms.length?syms:['—'],datasets:[{data:vals.length?vals:[0],backgroundColor:vals.map(v=>v>=0?'rgba(0,212,160,0.7)':'rgba(255,85,102,0.7)'),borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#5a5a72',font:{size:10}},grid:{display:false}},y:{ticks:{color:'#5a5a72',font:{size:10},callback:v=>'$'+v},grid:{color:'rgba(255,255,255,0.04)'}}}}});
+  symbolChart=new Chart(document.getElementById('symbol-chart').getContext('2d'),{type:'bar',data:{labels:syms.length?syms:['—'],datasets:[{data:vals.length?vals:[0],backgroundColor:vals.map(v=>v>=0?'rgba(124,58,237,0.7)':'rgba(255,85,102,0.7)'),borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#5a5a72',font:{size:10}},grid:{display:false}},y:{ticks:{color:'#5a5a72',font:{size:10},callback:v=>'$'+v},grid:{color:'rgba(255,255,255,0.04)'}}}}});
 
   const trades=await api('/trades/?limit=10');
   renderTable(trades,document.getElementById('recent-body'),true);
