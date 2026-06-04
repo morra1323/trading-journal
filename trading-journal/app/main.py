@@ -36,6 +36,10 @@ def landing():
 def app_page():
     return FileResponse("static/index.html")
 
+@app.get("/yandex_47b3cc5c6caee521.html")
+def yandex_verify():
+    return FileResponse("yandex_47b3cc5c6caee521.html")
+
 @app.get("/googleffbf3d971404215a.html")
 def google_verify():
     return FileResponse("googleffbf3d971404215a.html")
