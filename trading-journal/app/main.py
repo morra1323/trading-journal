@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from app.database import engine, Base
-from app.routers import trades, exchanges, ai, users, csv_import
+from app.routers import trades, exchanges, ai, users, csv_import, gamification
 from app.scheduler import start_scheduler
 import os
 
@@ -23,6 +23,7 @@ app.include_router(trades.router, prefix="/api/trades", tags=["trades"])
 app.include_router(exchanges.router, prefix="/api/exchanges", tags=["exchanges"])
 app.include_router(ai.router, prefix="/api/ai", tags=["ai"])
 app.include_router(csv_import.router, prefix="/api/csv", tags=["csv"])
+app.include_router(gamification.router, prefix="/api/game", tags=["game"])
 
 @app.on_event("startup")
 def startup():
@@ -35,23 +36,5 @@ def landing():
 @app.get("/app")
 def app_page():
     return FileResponse("static/index.html")
-
-@app.get("/yandex_47b3cc5c6caee521.html")
-def yandex_verify():
-    return FileResponse("yandex_47b3cc5c6caee521.html")
-
-@app.get("/googleffbf3d971404215a.html")
-def google_verify():
-    return FileResponse("googleffbf3d971404215a.html")
-
-@app.get("/sitemap.xml")
-def sitemap():
-    content = '''<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://https://trading-journal-production-ced4.up.railway.app/</loc><priority>1.0</priority></url>
-  <url><loc>https://https://trading-journal-production-ced4.up.railway.app/app</loc><priority>0.8</priority></url>
-</urlset>'''
-    from fastapi.responses import Response
-    return Response(content=content, media_type="application/xml")
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
