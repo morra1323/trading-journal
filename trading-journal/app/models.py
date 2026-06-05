@@ -32,8 +32,9 @@ class Trade(Base):
     strategy = Column(String, nullable=True)
     session = Column(String, nullable=True)
     note = Column(Text, nullable=True)
-    mood = Column(String, nullable=True)  # уверен / тревожно / скучно / жадность / страх
+    mood = Column(String, nullable=True)
     mood_note = Column(Text, nullable=True)
+    account_name = Column(String, nullable=True)  # "Тинькофф основной", "Bybit крипто" и т.д.
     created_at = Column(DateTime, default=func.now())
 
 
