@@ -138,6 +138,10 @@ tr:hover td{background:var(--bg3)}
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>
         Биржи
       </div>
+      <div class="nav-item" onclick="showPage('accounts',this)">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg>
+        Счета
+      </div>
       <div class="nav-item" onclick="showPage('tax',this)">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
         Налоги
@@ -249,6 +253,12 @@ tr:hover td{background:var(--bg3)}
         <button class="btn-primary" style="max-width:200px" onclick="addExchange()">Подключить</button>
         <div class="success-msg" id="exch-msg"></div>
       </div>
+    </div>
+
+    <div class="page" id="page-accounts">
+      <div class="page-title">Мои счета</div>
+      <div class="page-sub">Сравнение всех счетов и брокеров в одном месте</div>
+      <div id="accounts-page-content"><div class="empty-state">Загрузка...</div></div>
     </div>
 
     <div class="page" id="page-tax">
@@ -418,6 +428,7 @@ function showPage(name,el){
   if(name==='exchanges')loadExchanges();
   if(name==='game')loadGame();
   if(name==='tax')loadTax();
+  if(name==='accounts')loadAccountsPage();
 }
 
 function fmt(n){return(n>=0?'+$':'-$')+Math.abs(n).toFixed(2)}
@@ -556,6 +567,109 @@ async function loadGame(){
     </div>`;
 }
 
+async function loadAccountsPage(){
+  const el = document.getElementById('accounts-page-content');
+  const accounts = await api('/trades/accounts');
+
+  if(!accounts.length){
+    el.innerHTML = `<div class="empty-state">
+      Нет счетов — добавь сделки с указанием счёта!<br>
+      <span style="font-size:12px;margin-top:8px;display:block">При добавлении сделки заполни поле "Счёт"</span>
+    </div>`;
+    return;
+  }
+
+  const totalPnl = accounts.reduce((s,a) => s + a.pnl, 0);
+  const totalTrades = accounts.reduce((s,a) => s + a.trades, 0);
+
+  // Топ счёт
+  const best = [...accounts].sort((a,b) => b.pnl - a.pnl)[0];
+
+  el.innerHTML = `
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px">
+      <div class="metric">
+        <div class="metric-label">Всего счетов</div>
+        <div class="metric-value blue">${accounts.length}</div>
+        <div class="metric-sub">${totalTrades} сделок суммарно</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">Суммарный P&L</div>
+        <div class="metric-value ${totalPnl >= 0 ? 'green' : 'red'}">${totalPnl >= 0 ? '+' : ''}$${Math.abs(totalPnl).toFixed(2)}</div>
+        <div class="metric-sub">По всем счетам</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">Лучший счёт</div>
+        <div class="metric-value" style="font-size:16px">${best.name}</div>
+        <div class="metric-sub" style="color:var(--green)">+$${best.pnl.toFixed(2)}</div>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;margin-bottom:24px">
+      ${accounts.map(a => {
+        const pct = totalPnl ? Math.abs(a.pnl / totalPnl * 100) : 0;
+        const pnlColor = a.pnl >= 0 ? 'var(--green)' : 'var(--red)';
+        const barColor = a.pnl >= 0 ? 'var(--green)' : 'var(--red)';
+        return `<div onclick="filterByAccount('${a.name}')" style="background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:20px;cursor:pointer;transition:all 0.2s" onmouseover="this.style.borderColor='rgba(124,58,237,0.4)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='var(--border)';this.style.transform='none'">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+            <div style="font-size:15px;font-weight:700">${a.name}</div>
+            <div style="font-size:11px;background:var(--bg4);padding:3px 10px;border-radius:100px;color:var(--text3)">${a.trades} сделок</div>
+          </div>
+          <div style="font-size:28px;font-weight:800;font-family:'JetBrains Mono',monospace;color:${pnlColor};margin-bottom:6px">${a.pnl >= 0 ? '+' : ''}$${Math.abs(a.pnl).toFixed(2)}</div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+            <div style="font-size:13px;color:var(--text2)">Винрейт: <span style="color:var(--text);font-weight:600">${a.winrate}%</span></div>
+            <div style="font-size:13px;color:var(--text2)">${pct.toFixed(1)}% от общего</div>
+          </div>
+          <div style="background:var(--bg4);border-radius:4px;height:4px;overflow:hidden">
+            <div style="width:${Math.min(pct, 100)}%;height:100%;background:${barColor};border-radius:4px"></div>
+          </div>
+          <div style="margin-top:12px;font-size:11px;color:var(--green);opacity:0.7">Нажми чтобы посмотреть →</div>
+        </div>`;
+      }).join('')}
+    </div>
+
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;overflow:hidden">
+      <div style="padding:16px 20px;border-bottom:1px solid var(--border);font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em">Сравнение счетов</div>
+      <table style="width:100%;border-collapse:collapse">
+        <thead><tr>
+          <th style="text-align:left;padding:10px 20px;font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;border-bottom:1px solid var(--border)">Счёт</th>
+          <th style="text-align:right;padding:10px 20px;font-size:11px;color:var(--text3);text-transform:uppercase;border-bottom:1px solid var(--border)">Сделок</th>
+          <th style="text-align:right;padding:10px 20px;font-size:11px;color:var(--text3);text-transform:uppercase;border-bottom:1px solid var(--border)">P&L</th>
+          <th style="text-align:right;padding:10px 20px;font-size:11px;color:var(--text3);text-transform:uppercase;border-bottom:1px solid var(--border)">Винрейт</th>
+          <th style="text-align:center;padding:10px 20px;font-size:11px;color:var(--text3);text-transform:uppercase;border-bottom:1px solid var(--border)">Доля</th>
+        </tr></thead>
+        <tbody>
+          ${accounts.map(a => {
+            const pct = totalPnl ? Math.abs(a.pnl / totalPnl * 100).toFixed(1) : 0;
+            const pc = a.pnl >= 0 ? 'pnl-pos' : 'pnl-neg';
+            return `<tr style="cursor:pointer" onclick="filterByAccount('${a.name}')" onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background=''">
+              <td style="padding:12px 20px;font-weight:600">${a.name}</td>
+              <td style="padding:12px 20px;text-align:right;color:var(--text2)">${a.trades}</td>
+              <td style="padding:12px 20px;text-align:right" class="${pc}">${a.pnl >= 0 ? '+' : ''}$${Math.abs(a.pnl).toFixed(2)}</td>
+              <td style="padding:12px 20px;text-align:right;color:var(--text2)">${a.winrate}%</td>
+              <td style="padding:12px 20px">
+                <div style="background:var(--bg4);border-radius:4px;height:6px;overflow:hidden">
+                  <div style="width:${pct}%;height:100%;background:${a.pnl >= 0 ? 'var(--green)' : 'var(--red)'};border-radius:4px"></div>
+                </div>
+              </td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
+function filterByAccount(name){
+  // Переключаемся на дашборд с фильтром по счёту
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('page-dashboard').classList.add('active');
+  document.querySelectorAll('.nav-item')[0].classList.add('active');
+  const filter = document.getElementById('account-filter');
+  filter.value = name;
+  loadDashboard();
+}
+
 async function loadAccounts(){
   const accounts = await api('/trades/accounts');
   const filter = document.getElementById('account-filter');
@@ -668,7 +782,7 @@ async function addTrade(){
   const dir=document.getElementById('f-dir').value;
   const pct=(dir==='LONG')?(exit-entry)/entry*100:(entry-exit)/entry*100;
   const pnl=pct/100*size;
-  await api('/trades/','POST',{symbol:sym,direction:dir,exchange:document.getElementById('f-exch').value,entry_price:entry,exit_price:exit,size,pnl:parseFloat(pnl.toFixed(2)),pnl_percent:parseFloat(pct.toFixed(2)),strategy:document.getElementById('f-strat').value,note:document.getElementById('f-note').value,mood:document.getElementById('f-mood').value,mood_note:document.getElementById('f-mood-note').value,account_name:document.getElementById('f-account').value,opened_at:new Date().toISOString(),closed_at:new Date().toISOString()});
+  await api('/trades/','POST',{symbol:sym,direction:dir,exchange:document.getElementById('f-exch').value,entry_price:entry,exit_price:exit,size,pnl:parseFloat(pnl.toFixed(2)),pnl_percent:parseFloat(pct.toFixed(2)),strategy:document.getElementById('f-strat').value,note:document.getElementById('f-note').value,mood:document.getElementById('f-mood').value,mood_note:document.getElementById('f-mood-note').value,account_name:(document.getElementById('f-account')?document.getElementById('f-account').value:''),opened_at:new Date().toISOString(),closed_at:new Date().toISOString()});
   showMsg('add-msg','Сделка добавлена ✓','var(--green)');
   ['f-sym','f-entry','f-exit','f-size','f-note'].forEach(id=>document.getElementById(id).value='');
 }
