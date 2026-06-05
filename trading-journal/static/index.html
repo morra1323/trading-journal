@@ -391,6 +391,49 @@ function showPage(name,el){
 function fmt(n){return(n>=0?'+$':'-$')+Math.abs(n).toFixed(2)}
 function fmtPct(n){return(n>=0?'+':'')+n.toFixed(1)+'%'}
 
+async function loadGame(){
+  const s = await api('/game/stats');
+  const el = document.getElementById('game-content');
+  if(!s.level){el.innerHTML='<div class="empty-state">Добавь сделки чтобы разблокировать достижения!</div>';return;}
+  const prog = s.xp_progress || 0;
+  const nextXP = s.xp_to_next ? `${s.xp_to_next} XP до следующего` : 'Максимальный уровень!';
+  el.innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:24px">
+      <div class="metric">
+        <div class="metric-label">Уровень</div>
+        <div class="metric-value" style="font-size:20px">${s.level.icon} ${s.level.name}</div>
+        <div class="metric-sub">${s.xp} XP · ${nextXP}</div>
+        <div style="margin-top:10px;background:var(--bg4);border-radius:4px;height:6px;overflow:hidden">
+          <div style="width:${prog}%;height:100%;background:var(--green);border-radius:4px"></div>
+        </div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">Текущий стрик 🔥</div>
+        <div class="metric-value ${s.streak > 0 ? 'green' : ''}">${s.streak}</div>
+        <div class="metric-sub">Макс: ${s.max_streak} подряд</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">Достижения</div>
+        <div class="metric-value blue">${s.achievements.length}/${s.all_achievements.length}</div>
+        <div class="metric-sub">Ещё ${s.locked_count} не открыто</div>
+      </div>
+    </div>
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:20px">
+      <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:16px">Все достижения</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
+        ${s.all_achievements.map(a => {
+          const unlocked = s.achievements.find(u => u.id === a.id);
+          return `<div style="background:${unlocked ? 'var(--greenBg)' : 'var(--bg3)'};border:1px solid ${unlocked ? 'rgba(124,58,237,0.3)' : 'var(--border)'};border-radius:10px;padding:14px;opacity:${unlocked ? '1' : '0.5'}">
+            <div style="font-size:24px;margin-bottom:8px">${a.icon}</div>
+            <div style="font-size:13px;font-weight:600;margin-bottom:4px">${a.name}</div>
+            <div style="font-size:11px;color:var(--text3)">${a.desc}</div>
+            <div style="font-size:11px;color:var(--green);margin-top:6px;font-weight:600">+${a.xp} XP</div>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>`;
+}
+
 async function loadDashboard(){
   const s=await api('/trades/stats');
   if(!s.total_trades){
