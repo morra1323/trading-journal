@@ -143,6 +143,13 @@ def get_accounts(
 @router.post("/")
 def add_trade(data: dict, db: Session = Depends(get_db), user: Optional[User] = Depends(get_optional_user)):
     import time
+    from datetime import datetime as dt
+    def parse_dt(val):
+        if not val: return dt.utcnow()
+        if isinstance(val, dt): return val
+        try: return dt.fromisoformat(str(val).replace('Z','+00:00')).replace(tzinfo=None)
+        except: return dt.utcnow()
+
     trade = Trade(
         user_id=user.id if user else None,
         exchange_trade_id=data.get("exchange_trade_id", f"manual_{int(time.time())}"),
@@ -150,7 +157,7 @@ def add_trade(data: dict, db: Session = Depends(get_db), user: Optional[User] = 
         symbol=data["symbol"], direction=data["direction"],
         entry_price=data["entry_price"], exit_price=data["exit_price"],
         size=data["size"], pnl=data.get("pnl", 0), pnl_percent=data.get("pnl_percent", 0),
-        opened_at=data.get("opened_at"), closed_at=data.get("closed_at"),
+        opened_at=parse_dt(data.get("opened_at")), closed_at=parse_dt(data.get("closed_at")),
         strategy=data.get("strategy"), note=data.get("note"),
         account_name=data.get("account_name"),
     )
