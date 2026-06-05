@@ -12,6 +12,8 @@ def get_ccxt_exchange(account: ExchangeAccount):
         "apiKey": account.api_key,
         "secret": account.api_secret,
         "enableRateLimit": True,
+        "timeout": 30000,
+        "options": {"defaultType": "future"},
     })
 
 def sync_account(account: ExchangeAccount, db: Session):
