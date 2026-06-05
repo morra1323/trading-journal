@@ -19,6 +19,7 @@ def get_trades(
     exchange: Optional[str] = None,
     symbol: Optional[str] = None,
     direction: Optional[str] = None,
+    account: Optional[str] = None,
     limit: int = Query(100, le=500),
     offset: int = 0
 ):
@@ -26,6 +27,7 @@ def get_trades(
     if exchange: q = q.filter(Trade.exchange == exchange)
     if symbol:   q = q.filter(Trade.symbol.ilike(f"%{symbol}%"))
     if direction: q = q.filter(Trade.direction == direction)
+    if account: q = q.filter(Trade.account_name == account)
     return q.order_by(Trade.closed_at.desc()).offset(offset).limit(limit).all()
 
 @router.get("/stats")
@@ -107,6 +109,37 @@ def get_stats(
         "equity_curve": equity_curve,
     }
 
+@router.get("/accounts")
+def get_accounts(
+    db: Session = Depends(get_db),
+    user: Optional[User] = Depends(get_optional_user)
+):
+    q = filter_by_user(db.query(Trade), user)
+    trades = q.all()
+
+    accounts = {}
+    for t in trades:
+        name = t.account_name or t.exchange or "Основной"
+        if name not in accounts:
+            accounts[name] = {"name": name, "trades": 0, "pnl": 0, "wins": 0}
+        accounts[name]["trades"] += 1
+        accounts[name]["pnl"] += t.pnl or 0
+        if (t.pnl or 0) > 0:
+            accounts[name]["wins"] += 1
+
+    result = []
+    for name, data in accounts.items():
+        winrate = round(data["wins"] / data["trades"] * 100, 1) if data["trades"] else 0
+        result.append({
+            "name": name,
+            "trades": data["trades"],
+            "pnl": round(data["pnl"], 2),
+            "winrate": winrate,
+        })
+
+    return sorted(result, key=lambda x: x["pnl"], reverse=True)
+
+
 @router.post("/")
 def add_trade(data: dict, db: Session = Depends(get_db), user: Optional[User] = Depends(get_optional_user)):
     import time
@@ -119,6 +152,7 @@ def add_trade(data: dict, db: Session = Depends(get_db), user: Optional[User] = 
         size=data["size"], pnl=data.get("pnl", 0), pnl_percent=data.get("pnl_percent", 0),
         opened_at=data.get("opened_at"), closed_at=data.get("closed_at"),
         strategy=data.get("strategy"), note=data.get("note"),
+        account_name=data.get("account_name"),
     )
     db.add(trade); db.commit(); db.refresh(trade)
     return trade
