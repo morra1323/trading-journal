@@ -51,6 +51,21 @@ def add_account(data: dict, db: Session = Depends(get_db), user: Optional[User] 
     db.refresh(account)
     return {"status": "added", "id": account.id}
 
+@router.get("/{account_id}/status")
+def sync_status(account_id: int, db: Session = Depends(get_db)):
+    account = db.query(ExchangeAccount).filter(ExchangeAccount.id == account_id).first()
+    if not account:
+        return {"error": "Аккаунт не найден"}
+    from app.models import Trade
+    trades_count = db.query(Trade).filter(Trade.exchange == account.exchange).count()
+    return {
+        "id": account.id,
+        "exchange": account.exchange,
+        "last_sync": account.last_sync,
+        "trades_synced": trades_count,
+        "is_active": account.is_active
+    }
+
 @router.post("/{account_id}/sync")
 def manual_sync(account_id: int, background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
     account = db.query(ExchangeAccount).filter(ExchangeAccount.id == account_id).first()
