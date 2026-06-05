@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from app.database import engine, Base
-from app.routers import trades, exchanges, ai, users, csv_import, gamification
+from app.routers import trades, exchanges, ai, users, csv_import, gamification, tax
 from app.scheduler import start_scheduler
 import os
 
@@ -24,6 +24,7 @@ app.include_router(exchanges.router, prefix="/api/exchanges", tags=["exchanges"]
 app.include_router(ai.router, prefix="/api/ai", tags=["ai"])
 app.include_router(csv_import.router, prefix="/api/csv", tags=["csv"])
 app.include_router(gamification.router, prefix="/api/game", tags=["game"])
+app.include_router(tax.router, prefix="/api/tax", tags=["tax"])
 
 @app.on_event("startup")
 def startup():
