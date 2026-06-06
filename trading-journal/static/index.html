@@ -296,14 +296,55 @@ tr:hover td{background:var(--bg3)}
       <div class="page-title">Импорт CSV</div>
       <div class="page-sub">Загрузи историю сделок с биржи — автоматически определим формат</div>
 
-      <div class="form-card" style="max-width:580px">
-        <div style="font-size:13px;color:var(--text2);margin-bottom:20px;line-height:1.7">
-          Поддерживаемые форматы:<br>
-          <span style="color:var(--green)">Bybit</span> — История позиций → Экспорт CSV<br>
-          <span style="color:var(--green)">Binance</span> — История сделок → Экспорт<br>
-          <span style="color:var(--green)">Тинькофф</span> — Брокерский отчёт → CSV<br>
-          <span style="color:var(--text3)">Другие брокеры</span> — универсальный парсер
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px">
+
+        <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:20px">
+          <div style="font-size:13px;font-weight:700;margin-bottom:14px">📥 Как скачать CSV с Bybit</div>
+          <div style="font-size:13px;color:var(--text2);line-height:1.8">
+            1. Зайди в <strong style="color:var(--text)">bybit.com</strong><br>
+            2. Аккаунт → <strong style="color:var(--text)">История ордеров</strong><br>
+            3. Выбери период и тип (Спот / Фьючерсы)<br>
+            4. Нажми <strong style="color:var(--green)">Экспорт</strong> → скачай CSV<br>
+            5. Загрузи файл ниже ↓
+          </div>
         </div>
+
+        <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:20px">
+          <div style="font-size:13px;font-weight:700;margin-bottom:14px">📥 Как скачать CSV с Тинькофф</div>
+          <div style="font-size:13px;color:var(--text2);line-height:1.8">
+            1. Открой <strong style="color:var(--text)">Тинькофф Инвестиции</strong><br>
+            2. Портфель → <strong style="color:var(--text)">Все операции</strong><br>
+            3. Нажми на иконку <strong style="color:var(--green)">скачать отчёт</strong><br>
+            4. Выбери период → Скачать CSV<br>
+            5. Загрузи файл ниже ↓
+          </div>
+        </div>
+
+        <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:20px">
+          <div style="font-size:13px;font-weight:700;margin-bottom:14px">📥 Как скачать CSV с Binance</div>
+          <div style="font-size:13px;color:var(--text2);line-height:1.8">
+            1. Зайди в <strong style="color:var(--text)">binance.com</strong><br>
+            2. Кошелёк → <strong style="color:var(--text)">История транзакций</strong><br>
+            3. Выбери тип и период<br>
+            4. Нажми <strong style="color:var(--green)">Генерировать отчёт</strong><br>
+            5. Загрузи файл ниже ↓
+          </div>
+        </div>
+
+        <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:20px">
+          <div style="font-size:13px;font-weight:700;margin-bottom:14px">📥 Другие брокеры</div>
+          <div style="font-size:13px;color:var(--text2);line-height:1.8">
+            Поддерживаем любой CSV с колонками:<br>
+            <strong style="color:var(--text)">symbol, side/direction, price, qty, date</strong><br><br>
+            Сбер, ВТБ, БКС, Финам, MT4/MT5 —<br>
+            скачай отчёт в CSV и загружай!
+          </div>
+        </div>
+
+      </div>
+
+      <div class="form-card" style="max-width:580px">
+        <div style="font-size:14px;font-weight:700;margin-bottom:16px">Загрузить файл</div>
 
         <div id="drop-zone" onclick="document.getElementById('csv-file').click()" style="border:2px dashed var(--border2);border-radius:12px;padding:40px;text-align:center;cursor:pointer;transition:all 0.2s">
           <div style="font-size:32px;margin-bottom:8px">📂</div>
