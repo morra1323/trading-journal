@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, BackgroundTasks
+from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from app.database import get_db
 from app.models import ExchangeAccount, User
@@ -67,18 +67,18 @@ def sync_status(account_id: int, db: Session = Depends(get_db)):
     }
 
 @router.post("/{account_id}/sync")
-def manual_sync(account_id: int, background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
+def manual_sync(account_id: int, db: Session = Depends(get_db)):
     account = db.query(ExchangeAccount).filter(ExchangeAccount.id == account_id).first()
     if not account:
         return {"error": "Аккаунт не найден"}
 
-    # Выбираем синкер в зависимости от биржи
+    # Синхронный синк — видим результат и ошибки сразу
     if account.exchange in TINKOFF_EXCHANGES:
-        background_tasks.add_task(sync_tinkoff, account, db)
+        result = sync_tinkoff(account, db)
     else:
-        background_tasks.add_task(sync_account, account, db)
+        result = sync_account(account, db)
 
-    return {"status": "sync started"}
+    return result
 
 @router.delete("/{account_id}")
 def delete_account(account_id: int, db: Session = Depends(get_db)):
