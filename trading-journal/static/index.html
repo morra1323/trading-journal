@@ -170,34 +170,108 @@ tr:hover td{background:var(--bg3)}
 
   <div class="main">
     <div class="page active" id="page-dashboard">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-        <div class="page-title" style="margin:0">Дашборд</div>
-        <select id="account-filter" onchange="loadDashboard()" style="background:var(--bg3);border:1px solid var(--border);color:var(--text2);padding:8px 12px;border-radius:8px;font-size:13px;outline:none">
-          <option value="">Все счета</option>
-        </select>
+
+      <!-- TOP BAR -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem">
+        <div>
+          <div style="font-size:20px;font-weight:500;letter-spacing:-0.3px">Дашборд</div>
+          <div style="font-size:13px;color:var(--text3);margin-top:2px" id="dash-sub">Загрузка...</div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <div style="display:flex;gap:4px;background:var(--bg3);border-radius:8px;padding:3px">
+            <button onclick="setFilter('7d',this)" class="dash-period active-period" style="padding:5px 12px;border-radius:6px;border:none;font-size:12px;cursor:pointer;background:var(--bg2);color:var(--text)">7д</button>
+            <button onclick="setFilter('30d',this)" class="dash-period" style="padding:5px 12px;border-radius:6px;border:none;font-size:12px;cursor:pointer;background:transparent;color:var(--text2)">30д</button>
+            <button onclick="setFilter('90d',this)" class="dash-period" style="padding:5px 12px;border-radius:6px;border:none;font-size:12px;cursor:pointer;background:transparent;color:var(--text2)">90д</button>
+            <button onclick="setFilter('all',this)" class="dash-period" style="padding:5px 12px;border-radius:6px;border:none;font-size:12px;cursor:pointer;background:transparent;color:var(--text2)">Всё</button>
+          </div>
+          <select id="account-filter" onchange="loadDashboard()" style="background:var(--bg3);border:1px solid var(--border);color:var(--text2);padding:7px 12px;border-radius:8px;font-size:12px;outline:none">
+            <option value="">Все счета</option>
+          </select>
+        </div>
       </div>
-      <div class="page-sub" id="dash-sub">Загрузка...</div>
-      <div class="metrics">
-        <div class="metric"><div class="metric-label">Общий P&L</div><div class="metric-value" id="m-pnl">—</div><div class="metric-sub" id="m-pnl-sub"></div></div>
-        <div class="metric"><div class="metric-label">Винрейт</div><div class="metric-value blue" id="m-wr">—</div><div class="metric-sub" id="m-trades-sub"></div></div>
-        <div class="metric"><div class="metric-label">Profit Factor</div><div class="metric-value" id="m-pf">—</div><div class="metric-sub">выше 1.5 — хорошо</div></div>
-        <div class="metric"><div class="metric-label">Макс просадка</div><div class="metric-value red" id="m-dd">—</div></div>
+
+      <!-- METRICS -->
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:1.5rem">
+        <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px">
+          <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px">Общий P&L</div>
+          <div style="font-size:26px;font-weight:500;font-family:'JetBrains Mono',monospace" id="m-pnl">—</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:4px" id="m-pnl-sub"></div>
+        </div>
+        <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px">
+          <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px">Винрейт</div>
+          <div style="font-size:26px;font-weight:500;font-family:'JetBrains Mono',monospace;color:var(--blue)" id="m-wr">—</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:4px" id="m-trades-sub"></div>
+        </div>
+        <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px">
+          <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px">Profit Factor</div>
+          <div style="font-size:26px;font-weight:500;font-family:'JetBrains Mono',monospace" id="m-pf">—</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:4px">просадка: <span id="m-dd">—</span></div>
+        </div>
+        <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px">
+          <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px">Уровень</div>
+          <div style="font-size:18px;font-weight:500" id="m-level">—</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:6px" id="m-xp">0 XP</div>
+          <div style="margin-top:6px;background:var(--bg4);border-radius:3px;height:3px;overflow:hidden"><div id="m-xp-bar" style="height:100%;background:var(--green);border-radius:3px;width:0%;transition:width 0.5s"></div></div>
+        </div>
       </div>
-      <div class="charts">
-        <div class="chart-card"><div class="chart-title">Кривая капитала</div><div class="chart-wrap"><canvas id="equity-chart" role="img" aria-label="Кривая капитала"></canvas></div></div>
-        <div class="chart-card"><div class="chart-title">P&L по инструментам</div><div class="chart-wrap"><canvas id="symbol-chart" role="img" aria-label="PnL по символам"></canvas></div></div>
+
+      <!-- CHARTS ROW 1 -->
+      <div style="display:grid;grid-template-columns:2fr 1fr;gap:12px;margin-bottom:1.5rem">
+        <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
+            <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em">Кривая капитала</div>
+            <div style="display:flex;gap:6px">
+              <button class="eq-btn active-eq" onclick="setEqFilter('all',this)" style="font-size:11px;padding:3px 8px;border-radius:5px;border:0.5px solid var(--border);background:var(--bg3);cursor:pointer;color:var(--text)">Все счета</button>
+              <div id="eq-account-btns" style="display:flex;gap:6px"></div>
+            </div>
+          </div>
+          <div style="position:relative;height:180px"><canvas id="equity-chart" role="img" aria-label="Кривая капитала"></canvas></div>
+        </div>
+        <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px;display:flex;flex-direction:column;align-items:center;justify-content:center">
+          <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:12px;align-self:flex-start">Стрик побед 🔥</div>
+          <div style="font-size:52px;margin-bottom:4px">🔥</div>
+          <div style="font-size:48px;font-weight:500;color:var(--green);font-family:'JetBrains Mono',monospace;line-height:1" id="m-streak">0</div>
+          <div style="font-size:13px;color:var(--text2);margin-top:6px">побед подряд</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:4px">Рекорд: <span id="m-max-streak">0</span></div>
+        </div>
       </div>
-      <div class="table-card">
-        <div class="table-header"><div class="table-title">Последние сделки</div></div>
+
+      <!-- CHARTS ROW 2: Brokers + Weekday -->
+      <div style="display:grid;grid-template-columns:3fr 2fr;gap:12px;margin-bottom:1.5rem">
+        <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;overflow:hidden">
+          <div style="padding:12px 16px;border-bottom:0.5px solid var(--border);font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em">Breakdown по брокерам</div>
+          <div id="brokers-breakdown"><div class="empty-state" style="padding:24px">Загрузка...</div></div>
+        </div>
+        <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px">
+          <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:1rem">P&L по дням недели</div>
+          <div style="position:relative;height:160px"><canvas id="weekday-chart" role="img" aria-label="PnL по дням недели"></canvas></div>
+        </div>
+      </div>
+
+      <!-- BOTTOM ROW: Instruments + Mood + Achievements -->
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:1.5rem">
+        <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px">
+          <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:12px">Топ инструменты</div>
+          <div id="top-instruments"><div class="empty-state" style="padding:16px">Нет данных</div></div>
+        </div>
+        <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px">
+          <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:12px">🧠 Психология</div>
+          <div id="mood-stats" style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+            <div style="color:var(--text3);font-size:13px;grid-column:span 2">Добавь настроение к сделкам</div>
+          </div>
+        </div>
+        <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px">
+          <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:12px">Достижения</div>
+          <div id="dash-achievements"><div style="color:var(--text3);font-size:13px">Загрузка...</div></div>
+        </div>
+      </div>
+
+      <!-- RECENT TRADES -->
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;overflow:hidden">
+        <div style="padding:12px 16px;border-bottom:0.5px solid var(--border);font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em">Последние сделки</div>
         <div id="recent-body"></div>
       </div>
 
-      <div style="margin-top:16px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:20px">
-        <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:16px">🧠 Психология — P&L по настроению</div>
-        <div id="mood-stats" style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
-          <div style="color:var(--text3);font-size:13px">Добавь сделки с настроением чтобы увидеть аналитику</div>
-        </div>
-      </div>
     </div>
 
     <div class="page" id="page-trades">
@@ -388,7 +462,7 @@ tr:hover td{background:var(--bg3)}
 
 <script>
 const API=window.location.origin+'/api';
-let equityChart,symbolChart;
+let equityChart,symbolChart,weekdayChart;
 let currentUser=null;
 
 function getToken(){return localStorage.getItem('tj_token')}
@@ -457,6 +531,25 @@ function logout(){
 function showAuthMsg(id,msg,color){
   const el=document.getElementById(id);
   el.textContent=msg;el.style.color=color;
+}
+
+function setFilter(period, btn){
+  document.querySelectorAll('.dash-period').forEach(b => {
+    b.style.background = 'transparent';
+    b.style.color = 'var(--text2)';
+  });
+  btn.style.background = 'var(--bg2)';
+  btn.style.color = 'var(--text)';
+  loadDashboard();
+}
+
+function setEqFilter(account, btn){
+  document.querySelectorAll('.eq-btn').forEach(b => {
+    b.style.background = 'transparent';
+    b.style.color = 'var(--text2)';
+  });
+  btn.style.background = 'var(--bg3)';
+  btn.style.color = 'var(--text)';
 }
 
 function showPage(name,el){
@@ -742,55 +835,180 @@ async function loadDashboard(){
   await loadAccounts();
   const accountFilter = document.getElementById('account-filter').value;
   const statsUrl = accountFilter ? `/trades/stats?account=${encodeURIComponent(accountFilter)}` : '/trades/stats';
-  const s=await api(statsUrl);
+  const s = await api(statsUrl);
+
   if(!s.total_trades){
-    document.getElementById('dash-sub').textContent='Нет сделок — добавь первую или подключи биржу';
-    ['m-pnl','m-wr','m-pf','m-dd'].forEach(id=>document.getElementById(id).textContent='$0');
-    document.getElementById('recent-body').innerHTML='<div class="empty-state">Добавь первую сделку →</div>';
+    document.getElementById('dash-sub').textContent = 'Нет сделок — добавь первую или импортируй CSV';
+    ['m-pnl','m-wr','m-pf'].forEach(id => document.getElementById(id).textContent = '—');
+    document.getElementById('recent-body').innerHTML = '<div class="empty-state">Добавь первую сделку →</div>';
     return;
   }
-  document.getElementById('dash-sub').textContent=`${s.total_trades} сделок`;
-  const pEl=document.getElementById('m-pnl');
-  pEl.textContent=fmt(s.total_pnl);
-  pEl.className='metric-value mono '+(s.total_pnl>=0?'green':'red');
-  document.getElementById('m-pnl-sub').textContent=`+$${s.gross_profit} / -$${s.gross_loss}`;
-  document.getElementById('m-wr').textContent=s.winrate+'%';
-  document.getElementById('m-trades-sub').textContent=`из ${s.total_trades} сделок`;
-  const pfEl=document.getElementById('m-pf');
-  pfEl.textContent=s.profit_factor||'0';
-  pfEl.className='metric-value mono '+(s.profit_factor>=1.5?'green':s.profit_factor>=1?'blue':'red');
-  document.getElementById('m-dd').textContent='-$'+s.max_drawdown.toFixed(2);
 
-  const eq=s.equity_curve||[];
-  if(equityChart)equityChart.destroy();
-  equityChart=new Chart(document.getElementById('equity-chart').getContext('2d'),{type:'line',data:{labels:eq.map((_,i)=>i+1),datasets:[{data:eq.map(e=>e.pnl),borderColor:'#7c3aed',backgroundColor:'rgba(124,58,237,0.08)',tension:0.3,pointRadius:2,fill:true,borderWidth:2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#5a5a72',font:{size:10}},grid:{color:'rgba(255,255,255,0.04)'}},y:{ticks:{color:'#5a5a72',font:{size:10},callback:v=>'$'+v},grid:{color:'rgba(255,255,255,0.04)'}}}}});
+  document.getElementById('dash-sub').textContent = `${s.total_trades} сделок · обновлено только что`;
 
-  const syms=Object.keys(s.by_symbol||{});
-  const vals=syms.map(k=>s.by_symbol[k]);
-  if(symbolChart)symbolChart.destroy();
-  symbolChart=new Chart(document.getElementById('symbol-chart').getContext('2d'),{type:'bar',data:{labels:syms.length?syms:['—'],datasets:[{data:vals.length?vals:[0],backgroundColor:vals.map(v=>v>=0?'rgba(124,58,237,0.7)':'rgba(255,85,102,0.7)'),borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#5a5a72',font:{size:10}},grid:{display:false}},y:{ticks:{color:'#5a5a72',font:{size:10},callback:v=>'$'+v},grid:{color:'rgba(255,255,255,0.04)'}}}}});
+  // Метрики
+  const pEl = document.getElementById('m-pnl');
+  pEl.textContent = fmt(s.total_pnl);
+  pEl.style.color = s.total_pnl >= 0 ? 'var(--green)' : 'var(--red)';
+  document.getElementById('m-pnl-sub').textContent = `+$${s.gross_profit} прибыль / -$${s.gross_loss} убытки`;
+  document.getElementById('m-wr').textContent = s.winrate + '%';
+  document.getElementById('m-trades-sub').textContent = `из ${s.total_trades} сделок`;
+  const pfEl = document.getElementById('m-pf');
+  pfEl.textContent = s.profit_factor || '0';
+  pfEl.style.color = s.profit_factor >= 1.5 ? 'var(--green)' : s.profit_factor >= 1 ? 'var(--blue)' : 'var(--red)';
+  document.getElementById('m-dd').textContent = '-$' + s.max_drawdown.toFixed(2);
 
-  const accountFilter2 = document.getElementById('account-filter').value;
-  const tradesUrl = accountFilter2 ? `/trades/?limit=10&account=${encodeURIComponent(accountFilter2)}` : '/trades/?limit=10';
-  const trades=await api(tradesUrl);
-  renderTable(trades,document.getElementById('recent-body'),true);
+  // Уровень из геймификации
+  try {
+    const g = await api('/game/stats');
+    if(g.level){
+      document.getElementById('m-level').textContent = `${g.level.icon} ${g.level.name}`;
+      document.getElementById('m-xp').textContent = `${g.xp} XP · ${g.xp_to_next || 0} до следующего`;
+      document.getElementById('m-xp-bar').style.width = (g.xp_progress || 0) + '%';
+      document.getElementById('m-streak').textContent = g.streak || 0;
+      document.getElementById('m-max-streak').textContent = g.max_streak || 0;
 
-  // Аналитика по настроению
-  const mood = s.by_mood || {};
-  const moodEl = document.getElementById('mood-stats');
-  const moodEmoji = {'уверен':'😎','тревожно':'😰','скучно':'😴','жадность':'🤑','страх':'😨','спокойно':'😌','не указано':'❓'};
-  const moodKeys = Object.keys(mood);
-  if(moodKeys.length){
-    moodEl.innerHTML = moodKeys.map(m=>{
-      const d=mood[m];
-      const pc=d.pnl>=0?'green':'red';
-      return `<div style="background:var(--bg3);border-radius:8px;padding:14px">
-        <div style="font-size:18px;margin-bottom:6px">${moodEmoji[m]||'•'} ${m}</div>
-        <div style="font-family:'JetBrains Mono',monospace;font-size:16px;color:var(--${pc})">${d.pnl>=0?'+':''}$${Math.abs(d.pnl).toFixed(2)}</div>
-        <div style="font-size:11px;color:var(--text3);margin-top:4px">${d.count} сделок · ${d.winrate}% винрейт</div>
+      // Достижения
+      const achEl = document.getElementById('dash-achievements');
+      const unlocked = (g.achievements || []).slice(0, 6);
+      const allAch = g.all_achievements || [];
+      if(unlocked.length){
+        achEl.innerHTML = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">' +
+          allAch.slice(0,6).map(a => {
+            const u = unlocked.find(x => x.id === a.id);
+            return `<div style="background:var(--bg3);border-radius:8px;padding:8px;display:flex;align-items:center;gap:6px;opacity:${u?'1':'0.35'}">
+              <span style="font-size:16px">${a.icon}</span>
+              <div><div style="font-size:11px;font-weight:500">${a.name}</div><div style="font-size:10px;color:var(--green)">${u?'+'+a.xp+' XP':'???'}</div></div>
+            </div>`;
+          }).join('') + '</div>';
+      } else {
+        achEl.innerHTML = '<div style="color:var(--text3);font-size:12px">Добавь сделки чтобы открыть достижения!</div>';
+      }
+    }
+  } catch(e){}
+
+  // Equity chart
+  const eq = s.equity_curve || [];
+  if(equityChart) equityChart.destroy();
+  equityChart = new Chart(document.getElementById('equity-chart').getContext('2d'), {
+    type: 'line',
+    data: {
+      labels: eq.map((_,i) => i+1),
+      datasets: [{
+        data: eq.map(e => e.pnl),
+        borderColor: 'var(--green)',
+        backgroundColor: 'rgba(124,58,237,0.06)',
+        tension: 0.3, pointRadius: 0, fill: true, borderWidth: 2
+      }]
+    },
+    options: {responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{
+      x:{ticks:{color:'#555',font:{size:10}},grid:{color:'rgba(255,255,255,0.04)'}},
+      y:{ticks:{color:'#555',font:{size:10},callback:v=>'$'+v},grid:{color:'rgba(255,255,255,0.04)'}}
+    }}
+  });
+
+  // Weekday chart
+  const weekdays = ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'];
+  const weekMap = {'Monday':0,'Tuesday':1,'Wednesday':2,'Thursday':3,'Friday':4,'Saturday':5,'Sunday':6};
+  const weekData = [0,0,0,0,0,0,0];
+  Object.entries(s.by_weekday || {}).forEach(([day, val]) => {
+    const idx = weekMap[day];
+    if(idx !== undefined) weekData[idx] = val;
+  });
+  if(weekdayChart) weekdayChart.destroy();
+  weekdayChart = new Chart(document.getElementById('weekday-chart').getContext('2d'), {
+    type: 'bar',
+    data: {
+      labels: weekdays,
+      datasets: [{
+        data: weekData,
+        backgroundColor: weekData.map(v => v >= 0 ? 'rgba(124,58,237,0.7)' : 'rgba(226,75,74,0.6)'),
+        borderRadius: 4
+      }]
+    },
+    options: {responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{
+      x:{ticks:{color:'#555',font:{size:10}},grid:{display:false}},
+      y:{ticks:{color:'#555',font:{size:10},callback:v=>'$'+v},grid:{color:'rgba(255,255,255,0.04)'}}
+    }}
+  });
+
+  // Brokers breakdown
+  const accounts = await api('/trades/accounts');
+  const totalPnl = accounts.reduce((s,a) => s + a.pnl, 0);
+  const brokerEl = document.getElementById('brokers-breakdown');
+  if(accounts.length){
+    brokerEl.innerHTML = '<table style="width:100%;border-collapse:collapse;font-size:13px">' +
+      '<thead><tr>' +
+      '<th style="text-align:left;padding:8px 16px;font-size:11px;color:var(--text3);font-weight:400;border-bottom:0.5px solid var(--border)">Брокер</th>' +
+      '<th style="padding:8px;font-size:11px;color:var(--text3);font-weight:400;border-bottom:0.5px solid var(--border)">Сделок</th>' +
+      '<th style="padding:8px;font-size:11px;color:var(--text3);font-weight:400;border-bottom:0.5px solid var(--border)">P&L</th>' +
+      '<th style="padding:8px;font-size:11px;color:var(--text3);font-weight:400;border-bottom:0.5px solid var(--border)">Винрейт</th>' +
+      '<th style="padding:8px 16px;font-size:11px;color:var(--text3);font-weight:400;border-bottom:0.5px solid var(--border)">% портфеля</th>' +
+      '</tr></thead><tbody>' +
+      accounts.map(a => {
+        const pct = totalPnl ? Math.abs(a.pnl / totalPnl * 100).toFixed(0) : 0;
+        const pc = a.pnl >= 0 ? 'var(--green)' : 'var(--red)';
+        return `<tr style="cursor:pointer" onclick="filterByAccount('${a.name}')" onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background=''">
+          <td style="padding:10px 16px;font-weight:500">${a.name}</td>
+          <td style="padding:10px 8px;color:var(--text2);text-align:center">${a.trades}</td>
+          <td style="padding:10px 8px;color:${pc};font-weight:500;text-align:center">${a.pnl>=0?'+':''}$${Math.abs(a.pnl).toFixed(0)}</td>
+          <td style="padding:10px 8px;color:var(--text2);text-align:center">${a.winrate}%</td>
+          <td style="padding:10px 16px">
+            <div style="display:flex;align-items:center;gap:6px">
+              <div style="flex:1;background:var(--bg4);border-radius:3px;height:4px;overflow:hidden">
+                <div style="width:${pct}%;height:100%;background:var(--green);border-radius:3px"></div>
+              </div>
+              <span style="font-size:11px;color:var(--text3)">${pct}%</span>
+            </div>
+          </td>
+        </tr>`;
+      }).join('') + '</tbody></table>';
+  } else {
+    brokerEl.innerHTML = '<div class="empty-state" style="padding:24px">Нет данных по брокерам</div>';
+  }
+
+  // Top instruments
+  const instrEl = document.getElementById('top-instruments');
+  const bySymbol = s.by_symbol || {};
+  const symbols = Object.keys(bySymbol).slice(0, 6);
+  const maxVal = Math.max(...symbols.map(k => Math.abs(bySymbol[k])));
+  if(symbols.length){
+    instrEl.innerHTML = symbols.map(sym => {
+      const val = bySymbol[sym];
+      const pct = maxVal ? Math.abs(val / maxVal * 100) : 0;
+      const pc = val >= 0 ? 'var(--green)' : 'var(--red)';
+      return `<div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:0.5px solid var(--border)">
+        <span style="font-weight:500;font-size:13px;width:80px;overflow:hidden;text-overflow:ellipsis">${sym}</span>
+        <div style="flex:1;background:var(--bg4);border-radius:2px;height:4px;overflow:hidden">
+          <div style="width:${pct}%;height:100%;background:${pc};border-radius:2px"></div>
+        </div>
+        <span style="font-size:12px;color:${pc};font-family:'JetBrains Mono',monospace;width:70px;text-align:right">${val>=0?'+':''}$${Math.abs(val).toFixed(0)}</span>
       </div>`;
     }).join('');
   }
+
+  // Mood
+  const moodEl = document.getElementById('mood-stats');
+  const byMood = s.by_mood || {};
+  const moodEmoji = {'уверен':'😎','тревожно':'😰','скучно':'😴','жадность':'🤑','страх':'😨','спокойно':'😌'};
+  const moodKeys = Object.keys(byMood).filter(k => k !== 'не указано');
+  if(moodKeys.length){
+    moodEl.style.gridTemplateColumns = 'repeat(2,1fr)';
+    moodEl.innerHTML = moodKeys.map(m => {
+      const d = byMood[m];
+      return `<div style="background:var(--bg3);border-radius:8px;padding:8px;text-align:center">
+        <div style="font-size:18px;margin-bottom:3px">${moodEmoji[m]||'•'}</div>
+        <div style="font-size:12px;font-weight:500;color:${d.pnl>=0?'var(--green)':'var(--red)'}">${d.pnl>=0?'+':''}$${Math.abs(d.pnl).toFixed(0)}</div>
+        <div style="font-size:10px;color:var(--text3);margin-top:1px">${m}</div>
+      </div>`;
+    }).join('');
+  }
+
+  // Recent trades
+  const accountFilter2 = document.getElementById('account-filter').value;
+  const tradesUrl = accountFilter2 ? `/trades/?limit=8&account=${encodeURIComponent(accountFilter2)}` : '/trades/?limit=8';
+  const trades = await api(tradesUrl);
+  renderTable(trades, document.getElementById('recent-body'), true);
 }
 
 function renderTable(trades,container,mini=false){
