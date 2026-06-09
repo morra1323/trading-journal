@@ -317,56 +317,56 @@ tr:hover td{background:var(--bg3)}
       <div class="page-sub">Подключи API ключ — сделки будут подтягиваться автоматически</div>
       <div id="accounts-list"></div>
 
-      <!-- Bybit локальный синк -->
-      <div style="background:var(--bg2);border:1px solid rgba(124,58,237,0.3);border-radius:12px;padding:20px;margin-bottom:16px">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-          <div>
-            <div style="font-size:14px;font-weight:600;margin-bottom:4px">⚡ Bybit — локальный синк</div>
-            <div style="font-size:13px;color:var(--text2)">Скачай скрипт и запускай на своём компе — работает через твой российский IP</div>
-          </div>
-          <a href="/static/sync_bybit.py" download style="background:var(--green);color:#000;border:none;padding:10px 20px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;text-decoration:none;white-space:nowrap">⬇ Скачать скрипт</a>
-        </div>
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:16px">
-          <div style="background:var(--bg3);border-radius:8px;padding:12px;text-align:center">
-            <div style="font-size:20px;margin-bottom:6px">1️⃣</div>
-            <div style="font-size:12px;font-weight:600;margin-bottom:4px">Скачай скрипт</div>
-            <div style="font-size:11px;color:var(--text3)">Нажми кнопку справа</div>
-          </div>
-          <div style="background:var(--bg3);border-radius:8px;padding:12px;text-align:center">
-            <div style="font-size:20px;margin-bottom:6px">2️⃣</div>
-            <div style="font-size:12px;font-weight:600;margin-bottom:4px">Настрой</div>
-            <div style="font-size:11px;color:var(--text3)">Вставь API ключи Bybit и токен</div>
-          </div>
-          <div style="background:var(--bg3);border-radius:8px;padding:12px;text-align:center">
-            <div style="font-size:20px;margin-bottom:6px">3️⃣</div>
-            <div style="font-size:12px;font-weight:600;margin-bottom:4px">Запусти</div>
-            <div style="font-size:11px;color:var(--text3)">python sync_bybit.py</div>
-          </div>
-          <div style="background:var(--bg3);border-radius:8px;padding:12px;text-align:center">
-            <div style="font-size:20px;margin-bottom:6px">✅</div>
-            <div style="font-size:12px;font-weight:600;margin-bottom:4px">Готово!</div>
-            <div style="font-size:11px;color:var(--text3)">Сделки в журнале</div>
-          </div>
-        </div>
-        <div style="margin-top:14px;padding:10px 14px;background:var(--bg3);border-radius:8px;font-size:12px;color:var(--text2);line-height:1.6">
-          💡 <strong style="color:var(--text)">Как получить токен:</strong> открой журнал в браузере → F12 → Application → Local Storage → скопируй значение <code style="background:var(--bg4);padding:1px 6px;border-radius:3px">tj_token</code>
-        </div>
-      </div>
+      <!-- Биржи карточки -->
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px">
 
-      <!-- Тинькофф автосинк -->
-      <div style="background:var(--bg2);border:1px solid rgba(124,58,237,0.2);border-radius:12px;padding:20px;margin-bottom:16px">
-        <div style="font-size:14px;font-weight:600;margin-bottom:4px">🇷🇺 Тинькофф — автосинк</div>
-        <div style="font-size:13px;color:var(--text2);margin-bottom:16px">Подключается напрямую через T-Invest API — сделки подтягиваются автоматически каждые 5 минут</div>
-        <div class="form-grid">
-          <div class="field"><label>Биржа</label><select id="e-exch" style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px 12px;color:var(--text);font-size:14px;outline:none"><option value="tinkoff">🇷🇺 Тинькофф</option><option value="binance">Binance</option><option value="bybit">Bybit</option><option value="okx">OKX</option><option value="kraken">Kraken</option><option value="gateio">Gate.io</option></select></div>
-          <div class="field"><label>API Key / Токен</label><input id="e-key" placeholder="T-Invest токен или API ключ"></div>
-          <div class="field"><label>API Secret</label><input id="e-secret" type="password" placeholder="Secret (не нужен для Тинькофф)"></div>
+        <!-- Bybit -->
+        <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:20px">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+            <div style="width:36px;height:36px;background:#f7a600;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#000">BY</div>
+            <div><div style="font-weight:600">Bybit</div><div style="font-size:11px;color:var(--green)">● Браузерный синк</div></div>
+          </div>
+          <div style="font-size:12px;color:var(--text2);margin-bottom:14px;line-height:1.6">Синк прямо из браузера — работает через твой IP без блокировок</div>
+          <div class="field" style="margin-bottom:10px"><label>API Key</label><input id="bybit-key" placeholder="Вставь API Key (read-only)"></div>
+          <div class="field" style="margin-bottom:14px"><label>API Secret</label><input type="password" id="bybit-secret" placeholder="API Secret"></div>
+          <button onclick="browserSync('bybit')" style="width:100%;background:var(--green);color:#000;border:none;padding:10px;border-radius:8px;font-weight:700;font-size:13px;cursor:pointer">⚡ Синкнуть</button>
+          <div id="bybit-msg" style="font-size:12px;margin-top:8px;min-height:16px;text-align:center"></div>
         </div>
-        <button class="btn-primary" style="max-width:200px" onclick="addExchange()">Подключить</button>
-        <div class="success-msg" id="exch-msg"></div>
-        <div style="margin-top:12px;font-size:12px;color:var(--text3)">
-          Токен Тинькофф: <a href="https://www.tbank.ru/invest/settings/api/" target="_blank" style="color:var(--green)">tbank.ru/invest → Настройки → API</a>
+
+        <!-- Тинькофф -->
+        <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:20px">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+            <div style="width:36px;height:36px;background:#ffdd2d;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#000">TK</div>
+            <div><div style="font-weight:600">Тинькофф</div><div style="font-size:11px;color:var(--green)">● Авто каждые 5 мин</div></div>
+          </div>
+          <div style="font-size:12px;color:var(--text2);margin-bottom:14px;line-height:1.6">Единственный журнал с поддержкой T-Invest API — сделки подтягиваются сами</div>
+          <div class="field" style="margin-bottom:14px"><label>T-Invest токен</label><input id="tinkoff-key" placeholder="Токен из tbank.ru/invest → API"></div>
+          <button onclick="addExchangeDirect('tinkoff', document.getElementById('tinkoff-key').value, '')" style="width:100%;background:var(--green);color:#000;border:none;padding:10px;border-radius:8px;font-weight:700;font-size:13px;cursor:pointer">Подключить</button>
+          <div id="tinkoff-msg" style="font-size:12px;margin-top:8px;min-height:16px;text-align:center"></div>
+          <div style="margin-top:8px;font-size:11px;color:var(--text3)"><a href="https://www.tbank.ru/invest/settings/api/" target="_blank" style="color:var(--green)">Где взять токен →</a></div>
         </div>
+
+        <!-- Другие биржи -->
+        <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:20px">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+            <div style="width:36px;height:36px;background:var(--bg4);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px">🌐</div>
+            <div><div style="font-weight:600">Другие биржи</div><div style="font-size:11px;color:var(--green)">● Авто каждые 5 мин</div></div>
+          </div>
+          <div style="font-size:12px;color:var(--text2);margin-bottom:14px;line-height:1.6">Binance, OKX, Kraken, Gate.io — автосинк через API сервера</div>
+          <div class="field" style="margin-bottom:10px"><label>Биржа</label>
+            <select id="e-exch" style="width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px 12px;color:var(--text);font-size:13px;outline:none">
+              <option value="binance">Binance</option>
+              <option value="okx">OKX</option>
+              <option value="kraken">Kraken</option>
+              <option value="gateio">Gate.io</option>
+            </select>
+          </div>
+          <div class="field" style="margin-bottom:10px"><label>API Key</label><input id="e-key" placeholder="API Key (read-only)"></div>
+          <div class="field" style="margin-bottom:14px"><label>API Secret</label><input type="password" id="e-secret" placeholder="API Secret"></div>
+          <button onclick="addExchange()" style="width:100%;background:var(--green);color:#000;border:none;padding:10px;border-radius:8px;font-weight:700;font-size:13px;cursor:pointer">Подключить</button>
+          <div class="success-msg" id="exch-msg"></div>
+        </div>
+
       </div>
     </div>
 
@@ -1104,6 +1104,99 @@ async function addExchange(){
   await api('/exchanges/','POST',{exchange:document.getElementById('e-exch').value,api_key:key,api_secret:secret,name:document.getElementById('e-exch').value});
   showMsg('exch-msg','Биржа подключена!','var(--green)');
   document.getElementById('e-key').value='';document.getElementById('e-secret').value='';
+  loadExchanges();
+}
+
+async function browserSync(exchange){
+  const key = document.getElementById(exchange+'-key').value.trim();
+  const secret = document.getElementById(exchange+'-secret') ? document.getElementById(exchange+'-secret').value.trim() : '';
+  const msgEl = document.getElementById(exchange+'-msg');
+
+  if(!key){msgEl.style.color='var(--red)';msgEl.textContent='Введи API ключ';return;}
+
+  msgEl.style.color='var(--text2)';
+  msgEl.textContent='Подключаемся к '+exchange+'...';
+
+  try {
+    // Делаем запрос к Bybit прямо из браузера
+    const timestamp = Date.now();
+    const recvWindow = 5000;
+
+    // Bybit V5 API — получаем историю закрытых позиций
+    const params = `category=linear&limit=200`;
+    const signStr = timestamp + key + recvWindow + params;
+
+    // HMAC-SHA256 подпись через SubtleCrypto
+    const encoder = new TextEncoder();
+    const keyData = encoder.encode(secret);
+    const msgData = encoder.encode(signStr);
+    const cryptoKey = await crypto.subtle.importKey('raw', keyData, {name:'HMAC',hash:'SHA-256'}, false, ['sign']);
+    const sig = await crypto.subtle.sign('HMAC', cryptoKey, msgData);
+    const signature = Array.from(new Uint8Array(sig)).map(b=>b.toString(16).padStart(2,'0')).join('');
+
+    msgEl.textContent = 'Загружаем сделки...';
+
+    const response = await fetch(`https://api.bybit.com/v5/position/closed-pnl?${params}`, {
+      headers: {
+        'X-BAPI-API-KEY': key,
+        'X-BAPI-TIMESTAMP': timestamp.toString(),
+        'X-BAPI-RECV-WINDOW': recvWindow.toString(),
+        'X-BAPI-SIGN': signature,
+      }
+    });
+
+    const data = await response.json();
+
+    if(data.retCode !== 0){
+      msgEl.style.color='var(--red)';
+      msgEl.textContent='Ошибка: ' + (data.retMsg || 'неверный ключ');
+      return;
+    }
+
+    const positions = data.result?.list || [];
+    msgEl.textContent = `Найдено ${positions.length} позиций, отправляем...`;
+
+    let added = 0;
+    for(const pos of positions){
+      const pnl = parseFloat(pos.closedPnl || 0);
+      const size = parseFloat(pos.cumEntryValue || 0);
+      const direction = pos.side === 'Buy' ? 'LONG' : 'SHORT';
+      const ts = parseInt(pos.updatedTime || pos.createdTime || Date.now());
+      const date = new Date(ts).toISOString();
+
+      const result = await api('/trades/', 'POST', {
+        exchange_trade_id: `bybit_browser_${pos.symbol}_${pos.updatedTime}`,
+        exchange: 'bybit',
+        symbol: pos.symbol,
+        direction,
+        entry_price: parseFloat(pos.avgEntryPrice || 0),
+        exit_price: parseFloat(pos.avgExitPrice || 0),
+        size: round2(size),
+        pnl: round2(pnl),
+        pnl_percent: size ? round2(pnl/size*100) : 0,
+        opened_at: date,
+        closed_at: date,
+      });
+      if(result.id) added++;
+    }
+
+    msgEl.style.color='var(--green)';
+    msgEl.textContent = `✓ Добавлено ${added} новых позиций!`;
+
+  } catch(e) {
+    msgEl.style.color='var(--red)';
+    msgEl.textContent = 'Ошибка: ' + e.message;
+  }
+}
+
+function round2(n){ return Math.round(n * 100) / 100; }
+
+async function addExchangeDirect(exchange, key, secret){
+  const msgEl = document.getElementById(exchange+'-msg');
+  if(!key){msgEl.style.color='var(--red)';msgEl.textContent='Введи токен';return;}
+  await api('/exchanges/','POST',{exchange,api_key:key,api_secret:secret,name:exchange});
+  msgEl.style.color='var(--green)';
+  msgEl.textContent='✓ Подключено! Синк каждые 5 мин';
   loadExchanges();
 }
 
