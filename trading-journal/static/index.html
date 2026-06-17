@@ -318,7 +318,7 @@ tr:hover td{background:var(--bg3)}
       <div id="accounts-list"></div>
 
       <!-- Биржи карточки -->
-      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin-bottom:20px">
 
         <!-- Bybit -->
         <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:20px">
@@ -346,13 +346,39 @@ tr:hover td{background:var(--bg3)}
           <div style="margin-top:8px;font-size:11px;color:var(--text3)"><a href="https://www.tbank.ru/invest/settings/api/" target="_blank" style="color:var(--green)">Где взять токен →</a></div>
         </div>
 
+        <!-- БКС -->
+        <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:20px">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+            <div style="width:36px;height:36px;background:#e8000d;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff">БКС</div>
+            <div><div style="font-weight:600">БКС Брокер</div><div style="font-size:11px;color:var(--green)">● Авто каждые 5 мин</div></div>
+          </div>
+          <div style="font-size:12px;color:var(--text2);margin-bottom:14px;line-height:1.6">БКС Trade API — акции, облигации, фьючерсы Мосбиржи</div>
+          <div class="field" style="margin-bottom:14px"><label>API токен БКС</label><input id="bcs-key" placeholder="Токен из БКС Мир инвестиций"></div>
+          <button onclick="addExchangeDirect('bcs', document.getElementById('bcs-key').value, '')" style="width:100%;background:var(--green);color:#000;border:none;padding:10px;border-radius:8px;font-weight:700;font-size:13px;cursor:pointer">Подключить</button>
+          <div id="bcs-msg" style="font-size:12px;margin-top:8px;min-height:16px;text-align:center"></div>
+          <div style="margin-top:8px;font-size:11px;color:var(--text3)">Токен: БКС Мир инвестиций → Профиль → Токены API</div>
+        </div>
+
+        <!-- Финам -->
+        <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:20px">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+            <div style="width:36px;height:36px;background:#0066cc;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff">ФИН</div>
+            <div><div style="font-weight:600">Финам</div><div style="font-size:11px;color:var(--green)">● Авто каждые 5 мин</div></div>
+          </div>
+          <div style="font-size:12px;color:var(--text2);margin-bottom:14px;line-height:1.6">Финам Trade API — акции РФ и США, фьючерсы, валюта</div>
+          <div class="field" style="margin-bottom:14px"><label>Secret токен Финам</label><input id="finam-key" placeholder="Secret токен с tradeapi.finam.ru"></div>
+          <button onclick="addExchangeDirect('finam', document.getElementById('finam-key').value, '')" style="width:100%;background:var(--green);color:#000;border:none;padding:10px;border-radius:8px;font-weight:700;font-size:13px;cursor:pointer">Подключить</button>
+          <div id="finam-msg" style="font-size:12px;margin-top:8px;min-height:16px;text-align:center"></div>
+          <div style="margin-top:8px;font-size:11px;color:var(--text3)"><a href="https://tradeapi.finam.ru/" target="_blank" style="color:var(--green)">Получить токен →</a></div>
+        </div>
+
         <!-- Другие биржи -->
         <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:20px">
           <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
             <div style="width:36px;height:36px;background:var(--bg4);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px">🌐</div>
-            <div><div style="font-weight:600">Другие биржи</div><div style="font-size:11px;color:var(--green)">● Авто каждые 5 мин</div></div>
+            <div><div style="font-weight:600">Крипто биржи</div><div style="font-size:11px;color:var(--green)">● Авто каждые 5 мин</div></div>
           </div>
-          <div style="font-size:12px;color:var(--text2);margin-bottom:14px;line-height:1.6">Binance, OKX, Kraken, Gate.io — автосинк через API сервера</div>
+          <div style="font-size:12px;color:var(--text2);margin-bottom:14px;line-height:1.6">Binance, OKX, Kraken, Gate.io</div>
           <div class="field" style="margin-bottom:10px"><label>Биржа</label>
             <select id="e-exch" style="width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px 12px;color:var(--text);font-size:13px;outline:none">
               <option value="binance">Binance</option>
