@@ -17,65 +17,97 @@ def get_ccxt_exchange(account: ExchangeAccount):
     })
 
 def sync_account(account: ExchangeAccount, db: Session):
-    """Подтягивает все закрытые сделки с биржи и сохраняет в БД"""
+    """Подтягивает закрытые позиции с биржи"""
     try:
         exchange = get_ccxt_exchange(account)
-        markets = exchange.load_markets()
         synced = 0
 
-        # Берём все торговые пары
-        symbols = [s for s in markets if "/USDT" in s][:50]  # ограничиваем для скорости
-
-        for symbol in symbols:
-            try:
-                # Получаем историю сделок по символу
-                raw_trades = exchange.fetch_my_trades(symbol, limit=100)
-                
-                for rt in raw_trades:
-                    trade_id = f"{account.exchange}_{rt['id']}"
+        # Пробуем получить историю закрытых позиций (фьючерсы)
+        try:
+            exchange.options['defaultType'] = 'linear'
+            trades_data = exchange.fetch_closed_orders(limit=200)
+            
+            for rt in trades_data:
+                if rt.get('status') != 'closed':
+                    continue
                     
-                    # Пропускаем если уже есть в БД
-                    exists = db.query(Trade).filter(Trade.exchange_trade_id == trade_id).first()
-                    if exists:
-                        continue
+                trade_id = f"{account.exchange}_{rt['id']}"
+                exists = db.query(Trade).filter(Trade.exchange_trade_id == trade_id).first()
+                if exists:
+                    continue
 
-                    direction = "LONG" if rt["side"] == "buy" else "SHORT"
-                    size = rt["cost"] if rt["cost"] else rt["amount"] * rt["price"]
-                    fee = rt["fee"]["cost"] if rt.get("fee") else 0
+                direction = "LONG" if rt.get("side") == "buy" else "SHORT"
+                price = float(rt.get("price") or rt.get("average") or 0)
+                amount = float(rt.get("filled") or rt.get("amount") or 0)
+                size = round(price * amount, 2)
+                pnl = float(rt.get("info", {}).get("cumExecValue", 0) or 0)
+                fee = float(rt.get("fee", {}).get("cost", 0) or 0) if rt.get("fee") else 0
+                ts = rt.get("timestamp") or rt.get("lastUpdateTimestamp")
+                trade_date = datetime.utcfromtimestamp(ts / 1000) if ts else datetime.utcnow()
 
-                    trade = Trade(
-                        exchange_trade_id=trade_id,
-                        exchange=account.exchange,
-                        symbol=symbol,
-                        direction=direction,
-                        entry_price=rt["price"],
-                        exit_price=rt["price"],  # уточняется при закрытии
-                        size=round(size, 4),
-                        pnl=0,  # ccxt отдаёт P&L отдельно для фьючерсов
-                        pnl_percent=0,
-                        fee=round(fee, 6),
-                        opened_at=datetime.utcfromtimestamp(rt["timestamp"] / 1000),
-                        closed_at=datetime.utcfromtimestamp(rt["timestamp"] / 1000),
-                    )
-                    db.add(trade)
-                    synced += 1
+                trade = Trade(
+                    exchange_trade_id=trade_id,
+                    exchange=account.exchange,
+                    symbol=rt.get("symbol", ""),
+                    direction=direction,
+                    entry_price=price,
+                    exit_price=price,
+                    size=size,
+                    pnl=round(pnl, 4),
+                    pnl_percent=0,
+                    fee=round(fee, 6),
+                    opened_at=trade_date,
+                    closed_at=trade_date,
+                    user_id=account.user_id,
+                )
+                db.add(trade)
+                synced += 1
 
-            except Exception:
-                continue  # пропускаем пары без истории
-
-        # Для фьючерсов — подтягиваем P&L напрямую
-        if hasattr(exchange, "fetch_positions"):
+        except Exception as e:
+            # Если fetch_closed_orders не работает — пробуем fetch_my_trades
             try:
-                _sync_futures_pnl(exchange, account, db)
+                exchange.options['defaultType'] = 'spot'
+                markets = exchange.load_markets()
+                symbols = [s for s in markets if "/USDT" in s][:20]
+                
+                for symbol in symbols:
+                    try:
+                        raw_trades = exchange.fetch_my_trades(symbol, limit=50)
+                        for rt in raw_trades:
+                            trade_id = f"{account.exchange}_{rt['id']}"
+                            exists = db.query(Trade).filter(Trade.exchange_trade_id == trade_id).first()
+                            if exists:
+                                continue
+                            direction = "LONG" if rt["side"] == "buy" else "SHORT"
+                            size = float(rt.get("cost") or 0)
+                            fee = float(rt.get("fee", {}).get("cost", 0) or 0) if rt.get("fee") else 0
+                            ts = rt.get("timestamp")
+                            trade_date = datetime.utcfromtimestamp(ts / 1000) if ts else datetime.utcnow()
+                            trade = Trade(
+                                exchange_trade_id=trade_id,
+                                exchange=account.exchange,
+                                symbol=symbol,
+                                direction=direction,
+                                entry_price=float(rt.get("price") or 0),
+                                exit_price=float(rt.get("price") or 0),
+                                size=round(size, 2),
+                                pnl=0,
+                                pnl_percent=0,
+                                fee=round(fee, 6),
+                                opened_at=trade_date,
+                                closed_at=trade_date,
+                                user_id=account.user_id,
+                            )
+                            db.add(trade)
+                            synced += 1
+                    except Exception:
+                        continue
             except Exception:
                 pass
 
         db.commit()
-
-        # Обновляем время последней синхронизации
         account.last_sync = datetime.utcnow()
         db.commit()
-
         return {"status": "ok", "synced": synced}
 
     except ccxt.AuthenticationError:
@@ -126,10 +158,24 @@ def _sync_futures_pnl(exchange, account: ExchangeAccount, db: Session):
 
 def sync_all_accounts():
     """Запускается планировщиком — синкает все активные аккаунты"""
+    from app.tinkoff_syncer import sync_tinkoff
+    from app.bcs_syncer import sync_bcs
+    from app.finam_syncer import sync_finam
+
     db = SessionLocal()
     try:
         accounts = db.query(ExchangeAccount).filter(ExchangeAccount.is_active == 1).all()
         for account in accounts:
-            sync_account(account, db)
+            try:
+                if account.exchange in ("tinkoff", "tbank"):
+                    sync_tinkoff(account, db)
+                elif account.exchange == "bcs":
+                    sync_bcs(account, db)
+                elif account.exchange == "finam":
+                    sync_finam(account, db)
+                elif account.exchange != "bybit":  # bybit синкается из браузера
+                    sync_account(account, db)
+            except Exception:
+                continue
     finally:
         db.close()
